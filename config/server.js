@@ -1,6 +1,5 @@
 /**
  * @file 服务端的一些配置
- * @author wangyisheng@baidu.com (wangyisheng)
  */
 
 module.exports = {
