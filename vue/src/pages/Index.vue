@@ -11,7 +11,7 @@
 
 <script>
 import {mapState, mapActions} from 'vuex'
-import {sayHello} from '../utils/example'
+import {sayHello} from '@/utils/example'
 import HelloWorld from '../components/HelloWorld.vue'
 
 export default {

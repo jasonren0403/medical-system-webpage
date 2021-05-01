@@ -1,6 +1,5 @@
 /**
  * @file store 主入口
- * @author wangyisheng@baidu.com (wangyisheng)
  */
 
 import Vue from 'vue'

@@ -1,17 +1,22 @@
 <template>
   <div id="app">
-    <img class="app-image" src="http://boscdn.bpc.baidu.com/assets/mip/codelab/shell/mashroom.jpg">
+    <header/>
     <router-view/>
+    <footer/>
   </div>
 </template>
 
 <script>
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+
 export default {
-  name: 'App'
+  name: 'App',
+  components: {Footer, Header}
 }
 </script>
 
-<style lang="less" scoped>
+<style scoped>
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -19,11 +24,5 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
-
-  .app-image {
-    width: 300px;
-    height: 300px;
-    margin: 0 auto;
-  }
 }
 </style>

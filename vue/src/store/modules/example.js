@@ -1,9 +1,8 @@
 /**
  * @file 示例 vuex 模块
- * @author wangyisheng@baidu.com (wangyisheng)
  */
 
-import {get} from '../../utils/request'
+import {get} from '@/utils/request'
 
 const state = {
   message: 'Not meant to be displayed'
