@@ -1,6 +1,7 @@
 <template>
   <div id="app">
     <header/>
+    <el-button circle onclick="alert(123)">Click it!</el-button>
     <router-view/>
     <footer/>
   </div>
