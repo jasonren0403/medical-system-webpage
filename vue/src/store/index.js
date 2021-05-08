@@ -6,12 +6,14 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 import example from './modules/example'
+import loginState from "@/store/modules/loginState";
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   modules: {
-    example
+    example,
+    loginState
   },
   strict: process.env.NODE_ENV !== 'production'
 })

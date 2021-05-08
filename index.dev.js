@@ -21,98 +21,111 @@ process.env.NODE_ENV = 'development'
 registerApp()
 
 async function registerApp () {
-  app.use(async (ctx, next) => {
-    log.info(ctx.url)
-    await next()
-  })
+    app.use(async (ctx, next) => {
+        log.info(ctx.url)
+        await next()
+    })
 
-  try {
-    // node 端中间件和路由
-    await registerMiddlewares();
-    await registerRoutes();
-    app.use(router.routes());
-    app.use(router.allowedMethods());
+    try {
+        // node 端中间件和路由
+        await registerMiddlewares();
+        await registerRoutes();
+        app.use(router.routes());
+        app.use(router.allowedMethods());
 
-    // 前端(vue)路由
-    // 所有 navigate 请求重定向到 '/'，因为 webpack-dev-server 只服务这个路由
-    app.use(history({
-        htmlAcceptHeaders: ['text/html'],
-        index: '/',
-        verbose: true
-    }));
-    app.use(koaStatic('public'));
-    await registerWebpack();
+        // 前端(vue)路由
+        // 所有 navigate 请求重定向到 '/'，因为 webpack-dev-server 只服务这个路由
+        app.use(history({
+            htmlAcceptHeaders: ['text/html'],
+            index: '/',
+            verbose: true
+        }));
+        app.use(koaStatic('public'));
+        await registerWebpack();
 
-    app.listen(PORT);
+        app.listen(PORT);
 
-    log.info('开发环境服务器启动于端口号', PORT, '等待 webpack 编译中，请稍候。\n\n');
-  } catch (e) {
-    log.error(e)
-    log.error('开发环境服务器启动失败\n\n')
-  }
+        log.info('开发环境服务器启动于端口号', PORT, '等待 webpack 编译中，请稍候。\n\n');
+    } catch (e) {
+        log.error(e)
+        log.error('开发环境服务器启动失败\n\n')
+    }
 }
 
 async function registerRoutes () {
-  return new Promise((resolve, reject) => {
-    glob('actions/**/*.js', (err, files) => {
-      if (err) {
-        log.error('读取 actions 失败')
-        log.error(err)
-        reject()
-        return
-      }
+    return new Promise((resolve, reject) => {
+        glob('actions/**/*.js', (err, files) => {
+            if (err) {
+                log.error('读取 actions 失败')
+                log.error(err)
+                reject()
+                return
+            }
 
-      files.forEach(actionPath => {
-        let action = require(`./${actionPath}`)
-        if (typeof action.handler !== 'function') {
-          log.warn(actionPath, '不是一个合法的 action，已经跳过')
-          return
-        }
-        if (!action.routerPath) {
-          action.routerPath = getRouterPath(actionPath)
-        }
-        router.get(action.routerPath, action.handler)
-      })
+            files.forEach(actionPath => {
+                let action = require(`./${actionPath}`)
+                if (typeof action.handler !== 'function') {
+                    log.warn(actionPath, '不是一个合法的 action，已经跳过')
+                    return
+                }
+                if (!action.routerPath) {
+                    action.routerPath = getRouterPath(actionPath)
+                }
+                switch (action.type) {
+                    case 'post':
+                        router.post(action.routerPath, action.handler);
+                        break;
+                    case "put":
+                        router.put(action.routerPath, action.handler);
+                        break;
+                    case "delete":
+                        router.delete(action.routerPath, action.handler);
+                        break;
+                    case "get":
+                    default:
+                        router.get(action.routerPath, action.handler);
+                }
+            })
 
-      resolve()
+            resolve()
+        })
     })
-  })
 }
 
 async function registerMiddlewares () {
-  return new Promise((resolve, reject) => {
-    glob('middlewares/**/*.js', (err, files) => {
-      if (err) {
-        log.error('读取 middlewares 失败')
-        log.error(err)
-        reject()
-        return
-      }
+    return new Promise((resolve, reject) => {
+        glob('middlewares/**/*.js', (err, files) => {
+            if (err) {
+                log.error('读取 middlewares 失败')
+                log.error(err)
+                reject()
+                return
+            }
 
-      files.forEach(middlewarePath => {
-        let middleware = require(`./${middlewarePath}`)
-        if (typeof middleware !== 'function') {
-          return
-        }
+            files.forEach(middlewarePath => {
+                let middleware = require(`./${middlewarePath}`)
+                if (typeof middleware !== 'function') {
+                    return
+                }
 
-        router.use(middleware)
-      })
+                router.use(middleware)
+            })
 
-      resolve()
+            resolve()
+        })
     })
-  })
 }
 
 async function registerWebpack() {
-  return new Promise(resolve => {
-    koaWebpack({
-      config: webpackConfig,
-      devMiddleware: {
-        stats: 'minimal'
-      }
-    }).then(middleware => {
-      app.use(middleware)
-      resolve()
+    return new Promise(resolve => {
+        koaWebpack({
+            config: webpackConfig,
+            devMiddleware: {
+                stats: 'minimal'
+            }
+        }).then(middleware => {
+            app.use(middleware)
+            resolve()
+        })
     })
-  })
 }

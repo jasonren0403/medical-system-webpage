@@ -1,0 +1,35 @@
+.brand{
+    color: #409EFF;
+}
+
+.success{
+    color: #67C23A;
+}
+
+.warning{
+    color:#E6A23C;
+}
+
+.danger{
+    color:#F56C6C;
+}
+
+.info{
+    color:#909399;
+}
+
+.primary-txt{
+    color:#303133;
+}
+
+.common-txt{
+    color:#606266
+}
+
+.secondary-txt{
+    color:#909399
+}
+
+.placeholder-txt{
+    color:#C0C4CC
+}

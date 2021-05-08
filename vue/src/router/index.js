@@ -5,9 +5,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
-import Index from '@/pages/Index.vue'
-import Detail from '@/pages/Detail.vue'
-
 Vue.use(Router)
 
 export default new Router({
@@ -17,43 +14,37 @@ export default new Router({
         {
             path: '/',
             name: 'index',
-            component: Index
+            component: () => import('@/pages/Index')
         },
         {
             path: '/login',
             name: 'medical-system-login',
-            component: () => import('../pages/login'),
+            component: () => import('@/pages/login'),
             meta: {
                 title: '智慧医疗系统 - 登录'
             }
         },
         {
-            path: '/p/',
-            name: 'patient_manage',
-            component: () => import('../pages/PatientInfo'),
-            children: [
-                {
-                    path: 'pnew',
-                    name: 'new_patient',
-                    component: () => import('../pages/PatientEnter')
-                },
-                {
-                    path: ':pid',
-                    name: 'single_info',
-                    component: () => import('../pages/PatientInfo')
-                }
-            ]
+            path: '/d',
+            name: 'doctor-info',
+            component: () => import('@/pages/DoctorInfo'),
+            meta: {}
         },
         {
-            path: '/mr/',
-            name: 'record_manage',
-            component: ()=> import('../pages/MedicalRecordManage')
+            path: '/p/:pid',
+            name: 'single_info',
+            component: () => import('../pages/PatientInfo')
         },
-        // {
-        //     path: '/detail/:id',
-        //     name: 'detail',
-        //     component: Detail
-        // },
+        {
+            path: '/pnew',
+            name: 'new_patient',
+            component: () => import('../pages/PatientEnter')
+        },
+        {
+            path: '/mr',
+            name: 'record_manage',
+            component: () => import('../pages/MedicalRecordManage')
+        },
         {
             path: '*',
             name: 'fallback',

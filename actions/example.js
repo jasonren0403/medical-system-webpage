@@ -17,7 +17,8 @@ module.exports = {
     // let params = ctx.params
 
     ctx.body = {
-      message: 'Greeting from node action',
+      message: '接口正常工作',
+      checkTime: new Date().getTime(),
       query
     }
   }
