@@ -4,6 +4,7 @@
 
 const Koa = require('koa')
 const Router = require('koa-router')
+const bodyParser = require('koa-body')
 const glob = require('glob')
 const koaStatic = require('koa-static')
 const history = require('koa2-history-api-fallback')
@@ -12,6 +13,7 @@ const {PORT} = require('./config/server')
 const {getRouterPath, log} = require('./utils/framework')
 
 const app = new Koa()
+app.use(bodyParser())
 const router = new Router()
 
 process.env.NODE_ENV = 'production'

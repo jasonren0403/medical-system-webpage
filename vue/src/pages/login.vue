@@ -1,25 +1,37 @@
 <template>
     <div>
         <div class="form-wrapper">
-            <el-form ref="form" :model="form" label-position="right" :rules="rules" show-message status-icon>
-                <el-form-item label="DoctorID" required prop="doctorID">
-                    <el-input placeholder="请输入要进行操作的医生ID以继续"
-                              v-model="form.doctorID"
-                              clearable/>
-                </el-form-item>
-                <el-form-item label="验证码" required prop="captchaCode">
-                    <el-input v-model="form.captchaCode"></el-input>
-                </el-form-item>
-                <el-checkbox v-model="form.checked">记住操作员</el-checkbox>
-                <el-form-item prop="csrfVal">
-                    <input type="hidden" v-model="form.csrfVal"></input>
-                </el-form-item>
-                <el-button-group>
-                    <el-button @click.native.prevent="handleReset" type="info" icon="el-icon-refresh-right">重置表格
-                    </el-button>
-                    <el-button :loading="loading" @click.native.prevent="handleLogin" type="primary">进入系统</el-button>
-                </el-button-group>
-            </el-form>
+            <el-row>
+                <el-col :span="16" :offset="4">
+                    <el-form ref="form" :model="form" label-position="right" :rules="rules" show-message status-icon>
+                        <el-row :gutter="15">
+                            <el-col :span="12">
+                                <el-form-item label="DoctorID" required prop="doctorID">
+                                    <el-input placeholder="请输入要进行操作的医生ID以继续"
+                                              v-model="form.doctorID"
+                                              clearable/>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="12">
+                                <el-form-item label="验证码" required prop="captchaCode">
+                                    <el-input v-model="form.captchaCode"></el-input>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <!--
+                        <el-checkbox v-model="form.rememOperator">记住操作员</el-checkbox>
+                        -->
+                        <el-form-item prop="csrfVal">
+                            <input type="hidden" v-model="form.csrfVal"></input>
+                        </el-form-item>
+                        <el-button-group>
+                            <el-button @click.native.prevent="handleReset" type="info" icon="el-icon-refresh-right">重置表格
+                            </el-button>
+                            <el-button :loading="loading" @click.native.prevent="handleLogin" type="primary">进入系统</el-button>
+                        </el-button-group>
+                    </el-form>
+                </el-col>
+            </el-row>
         </div>
     </div>
 </template>
@@ -40,7 +52,7 @@ export default {
                 doctorID: '',
                 captchaCode: '',
                 csrfVal: '',
-                checked: false
+                rememOperator: false
             },
             loading: false,
             rules: {
@@ -61,17 +73,24 @@ export default {
         }
     },
     methods: {
-        handleLogin() {
+        async handleLogin() {
             this.loading = true
-            this.$refs["form"].validate((valid) => {
+            await this.$refs["form"].validate((valid) => {
                 if (valid) {
-                    this.$store.dispatch("loginState/login",this.form)
-                    // jump to main page
-                    this.$router.push({
-                        name: 'index'
-                    })
-                    return true;
+                    this.$store.dispatch("loginState/login", this.form)
+                    this.$store.dispatch("credential/init",this.form.doctorID)
+                    setTimeout(() => {
+                        this.$router.push({
+                            name: 'index'
+                        })
+                        this.loading = false;
+                    }, 3000)
+                    return true
                 } else {
+                    // this.$notify.error({
+                    //     title:'错误',
+                    //     message:''
+                    // })
                     this.loading = false
                     this.$refs["form"].resetFields()
                     return false;

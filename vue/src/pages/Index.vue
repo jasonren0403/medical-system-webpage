@@ -1,26 +1,18 @@
 <template>
-  <div>
-
-  </div>
+    <div>
+        <p>主页</p>
+    </div>
 </template>
 
 <script>
 
 export default {
-  name: 'Index',
+    name: 'Index',
 
-  components: {
-  }
+    components: {}
 }
 </script>
 
-<style scoped lang="less">
-h2 {
-  font-weight: normal;
-}
-.wrapper {
-  .author {
-    text-align: center
-  }
-}
+<style scoped>
+
 </style>

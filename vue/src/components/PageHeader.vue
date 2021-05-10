@@ -1,11 +1,13 @@
 <template>
-    <div class="h">
+    <div class="h" v-if="isShow">
         <div v-if="loggedIn">
             <el-row :gutter="25">
                 <el-col :span="4" :offset="20">
                     <el-dropdown trigger="click" @command="handleCommand">
-                        <el-button type="primary">
-                            当前用户{{ doctorID }}<i class="el-icon-user-solid el-icon--right"></i></el-button>
+                        <el-tooltip :content="'当前用户：'.concat(doctorName)" placement="bottom">
+                            <el-button type="primary">
+                                当前用户: {{ doctorName | striplongstr }}<i class="el-icon-user-solid el-icon--right"></i></el-button>
+                        </el-tooltip>
                         <el-dropdown-menu slot="dropdown">
                             <el-dropdown-item icon="el-icon-exit" command="exit">退出系统</el-dropdown-item>
                         </el-dropdown-menu>
@@ -27,16 +29,18 @@ export default {
     name: "PageHeader",
     created() {
         this.$store.dispatch('loginState/initLoginData')
+        this.$store.dispatch('credential/init')
     },
     data() {
         return {
-            loggedIn: true
+            isShow: true
         }
     },
     computed: {
         ...mapState({
-            loggedIn: state => state["loginState/loggedIn"],
-            doctorID: state => state["loginState/loginID"]
+            loggedIn: state => state.loginState.loggedIn,
+            logID: state=>state.loginState.loginID,
+            doctorName: state => state.credential.name
         })
     },
     methods: {
@@ -46,17 +50,29 @@ export default {
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
-                this.$store.dispatch('loginState/logout')
-                this.$message({
-                    type: 'success',
-                    message: '已退出系统'
-                });
-                this.$router.push({
-                    name: 'medical-system-login'
-                })
+                this.$store.dispatch('loginState/logout',this.logID)
+                setTimeout(() => {
+                    this.$router.push({
+                        name: 'medical-system-login'
+                    })
+                    this.$message({
+                        type: 'success',
+                        message: '已退出系统'
+                    });
+                }, 3000)
             }).catch(() => {
 
             });
+        },
+        async reload() {
+            this.isShow = false
+            await this.$nextTick()
+            this.isShow = true
+        }
+    },
+    watch: {
+        '$loggedIn'(old, fresh) {
+            this.reload()
         }
     }
 }

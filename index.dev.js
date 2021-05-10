@@ -4,16 +4,19 @@
 
 const Koa = require('koa')
 const Router = require('koa-router')
+const koaBody = require("koa-body");
 const glob = require('glob')
 const koaWebpack = require('koa-webpack')
 const koaStatic = require('koa-static')
 const history = require('koa2-history-api-fallback')
+const Fgateway = require('./utils/FabricGateway')
 
 const {PORT} = require('./config/server')
 const {getRouterPath, log} = require('./utils/framework')
 const webpackConfig = require('./vue/webpack.config.js')
 
 const app = new Koa()
+app.use(koaBody())
 const router = new Router()
 
 process.env.NODE_ENV = 'development'
@@ -22,10 +25,10 @@ registerApp()
 
 async function registerApp () {
     app.use(async (ctx, next) => {
-        log.info(ctx.url)
+        log.info(`[${new Date().toLocaleString()}] ${ctx.method} => ${ctx.url} hasbody: ${ctx.method!=='GET'&&JSON.stringify(ctx.request.body)}`)
         await next()
     })
-
+    let gw = Fgateway.getInstance()
     try {
         // node 端中间件和路由
         await registerMiddlewares();
@@ -49,6 +52,7 @@ async function registerApp () {
     } catch (e) {
         log.error(e)
         log.error('开发环境服务器启动失败\n\n')
+        gw.delInstance()
     }
 }
 

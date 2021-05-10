@@ -6,7 +6,7 @@
                 <el-form ref="form" :disabled="disabled" :model="doctor" label-width="40px">
                     <el-row :gutter="5">
                         <el-col :span="6">
-                            <el-form-item label="ID" prop="id">
+                            <el-form-item label="ID" prop="id" readonly>
                                 <el-input v-model="doctor.person.id"></el-input>
                             </el-form-item>
                         </el-col>
@@ -41,6 +41,7 @@
 </template>
 
 <script>
+import {get} from '@/utils/request'
 export default {
     name: "DoctorInfo",
     data() {
@@ -58,11 +59,20 @@ export default {
         }
     },
     mounted() {
-        let dID = this.$store.state["loginState/loginID"]
+        let dID = this.$store.state.loginState.loginID
         if (dID !== undefined && dID.length > 0) {
             //load data with current doctor
-            //this.doctor=
-            this.temp_doctor = this.doctor
+            let req = get('/api/v1/doctor/getDoctorByID',{
+                params:{
+                    doctorID:dID
+                }
+            })
+            req.then((res)=>{
+                if (res.success){
+                    this.doctor = res.content
+                    this.temp_doctor = this.doctor
+                }
+            })
         }
     },
     computed: {

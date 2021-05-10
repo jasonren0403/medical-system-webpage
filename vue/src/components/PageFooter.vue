@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import {get} from '@/utils/request'
+import {get, post} from '@/utils/request'
 
 export default {
     name: "PageFooter",
@@ -27,10 +27,11 @@ export default {
     },
     methods:{
         async requestForInterface(){
-            let result = await get('/api/example')
+            let result = await get('/api/routeTest/example')
 
             this.message = result.message
             this.checkTime = result.checkTime
+            // let a = await post('/api/v1/routeTest/post',{d:1,s:'2'})
         }
     }
 }

@@ -2,10 +2,11 @@
  * @file 测试中间件
  */
 
+
 module.exports = async (ctx, next) => {
   // 信息获取方式和 actions 一样，通过 ctx
   // console.log('This is example middleware', ctx.url, ctx.query)
-
+  // console.log(ctx.req)
   // 如果要继续走路由组件的，不要忘记调用 await next()
   await next()
 

@@ -4,6 +4,7 @@
 
 import Vue from 'vue'
 import Router from 'vue-router'
+import store from "@/store/index";
 
 Vue.use(Router)
 
@@ -14,7 +15,16 @@ export default new Router({
         {
             path: '/',
             name: 'index',
-            component: () => import('@/pages/Index')
+            component: () => import('@/pages/Index'),
+            beforeEnter(to, from, next) {
+                console.log(`[beforeEnter /] ${JSON.stringify(store.state)}`)
+                if (!store.state.loginState.loggedIn) {
+                    next({
+                        name: 'medical-system-login'
+                    })
+                }
+                next()
+            }
         },
         {
             path: '/login',
@@ -28,12 +38,28 @@ export default new Router({
             path: '/d',
             name: 'doctor-info',
             component: () => import('@/pages/DoctorInfo'),
-            meta: {}
+            meta: {
+                title: '智慧医疗系统 - 医生信息管理'
+            },
+            beforeEnter(to, from, next) {
+                console.log(`[beforeEnter /] ${JSON.stringify(store.state)}`)
+                if (!store.state.loginState.loggedIn) {
+                    next({
+                        name: 'medical-system-login'
+                    })
+                }
+                next()
+            }
+        },
+        {
+            path: '/p/',
+            name: 'patient_manage_landing',
+            component: () => import("@/pages/PatientIndex")
         },
         {
             path: '/p/:pid',
             name: 'single_info',
-            component: () => import('../pages/PatientInfo')
+            component: () => import('@/pages/PatientInfo')
         },
         {
             path: '/pnew',

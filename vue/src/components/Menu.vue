@@ -5,7 +5,7 @@
             <span slot="title">医生信息</span>
         </el-menu-item>
         <el-submenu index="2">
-            <template slot="title">
+            <template slot="title" :route="{name:'patient_manage_landing'}">
                 <span>患者信息管理</span>
             </template>
             <el-menu-item index="2-1" :route="{name:'record_manage'}">

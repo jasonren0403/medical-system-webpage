@@ -27,7 +27,7 @@ export default {
     name: 'App',
     components: {PageFooter, PageHeader, AsideMenu},
     created() {
-        this.$store.dispatch("loginState/initLoginData")
+        // this.$store.dispatch("loginState/initLoginData")
     },
     computed: {
         ...mapState({
