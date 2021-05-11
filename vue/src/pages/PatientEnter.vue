@@ -279,12 +279,13 @@ export default {
             return value.toString() + '岁'
         },
         async submitForm() {
-            await this.$refs["form"].validate((valid) => {
-                if (valid) {
-                    // post("/api/v1/medicalRecord/new",)
-                }
-            })
-            this.step__active = 0
+            // console.log(this.newRecordForm)
+            let res = await post('/api/v1/medicalRecord/new', this.newRecordForm)
+            if (res.success) {
+                this.newRecordForm = {}
+                this.step__active = 0
+                this.$message('提交成功！')
+            }
         },
         handleReset() {
             this.$refs["form"].resetFields()
@@ -305,7 +306,6 @@ export default {
                         this.loading = false
                     }
                 })
-
             }, 100)
         }
     }

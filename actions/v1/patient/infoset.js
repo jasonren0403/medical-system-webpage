@@ -3,8 +3,9 @@ module.exports = {
     type: "post",
     async handler(ctx, next) {
         let changeItem = ctx.request.body
-        delete changeItem["id"]
+        // delete changeItem["id"]
         delete changeItem["name"]
+        console.log(`set new patient info=> ${JSON.stringify(changeItem)}`)
         ctx.body = {
             success: true,
             // sample return= infoget(updated)

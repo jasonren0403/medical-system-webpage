@@ -4,7 +4,7 @@
             <PageHeader/>
         </el-header>
         <el-container>
-            <el-aside width="200px" > <!--v-show="loggedIn"-->
+            <el-aside width="200px"> <!--todo: v-show="loggedIn" does not work properly, the store may have problem-->
                 <AsideMenu/>
             </el-aside>
             <el-main id="main-content">
@@ -28,6 +28,7 @@ export default {
     components: {PageFooter, PageHeader, AsideMenu},
     created() {
         // this.$store.dispatch("loginState/initLoginData")
+        // console.log(`Page App:${this.$store.state.loginState.loggedIn}`)
     },
     computed: {
         ...mapState({
@@ -35,7 +36,11 @@ export default {
             doctorID: state => state["loginState/loginID"]
         })
     },
-    methods: mapActions(['loginState/login', 'loginState/logout'])
+    watch:{
+        'loggedIn'(old,newval){
+            console.log(`loggedIn=>${newval}`)
+        }
+    }
 }
 </script>
 

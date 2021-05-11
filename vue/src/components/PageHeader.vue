@@ -79,21 +79,6 @@ export default {
 </script>
 
 <style scoped>
-.grid-content {
-    border-radius: 4px;
-}
-
-.bg-purple-dark {
-    background: #99a9bf;
-}
-
-.bg-purple {
-    background: #d3dce6;
-}
-
-.bg-purple-light {
-    background: #e5e9f2;
-}
 
 .h {
     /*border: 1px solid black;*/

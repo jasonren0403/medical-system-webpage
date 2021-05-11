@@ -7,8 +7,8 @@ Vue.filter("striplongstr", function (value) {
     return value
 })
 
-Vue.filter("handleEmptyable",function(value){
-    if(!value || value.length()===0){
+Vue.filter("fallbackEmptyable",function(value){
+    if(!value || value.length===0){
         return "没有任何值哦~"
     }
     return value

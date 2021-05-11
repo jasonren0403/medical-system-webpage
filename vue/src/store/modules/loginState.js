@@ -29,6 +29,7 @@ export default {
             }
         },
         async login({commit, state}, payload) {
+            console.log("login")
             let apireq = await post('/api/v1/login', payload)
             if (apireq.success) {
                 commit("setLogin", true)
@@ -36,6 +37,7 @@ export default {
             }
         },
         async logout({commit,state},payload) {
+            console.log("logout")
             let apireq = await post('/api/v1/logout', {id: payload.id})
             if (apireq.success) {
                 commit("setLogin", false)
