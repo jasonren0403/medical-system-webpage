@@ -175,6 +175,18 @@ import {get, post} from "@/utils/request";
 
 export default {
     name: "PatientEnter",
+    beforeCreate() {
+        if (!this.$store.state.loginState.loggedIn){
+            this.$notify({
+                title:'提示',
+                message:'请先登录',
+                type:"warning"
+            })
+            this.$router.push({
+                name:'medical-system-login'
+            })
+        }
+    },
     mounted() {
         this.fetchPatients()
     },

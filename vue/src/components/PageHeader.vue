@@ -27,6 +27,7 @@ import {mapState, mapActions} from 'vuex'
 export default {
     name: "PageHeader",
     created() {
+        console.log("page header created")
         this.$store.dispatch('loginState/initLoginData')
         this.$store.dispatch('credential/init')
     },
@@ -50,7 +51,14 @@ export default {
                 type: 'warning'
             }).then(() => {
                 this.$store.dispatch('loginState/logout',this.logID)
+                this.$notify.info({
+                    title:'提示',
+                    message:'正在登出中，请稍候',
+                    offset: 100,
+                    duration:1500
+                })
                 setTimeout(() => {
+                    this.reload()
                     this.$router.push({
                         name: 'medical-system-login'
                     })
@@ -67,11 +75,6 @@ export default {
             this.isShow = false
             await this.$nextTick()
             this.isShow = true
-        }
-    },
-    watch: {
-        '$loggedIn'(old, fresh) {
-            this.reload()
         }
     }
 }

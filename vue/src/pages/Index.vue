@@ -75,6 +75,18 @@ export default {
     name: 'Index',
 
     components: {},
+    beforeCreate() {
+        if (!this.$store.state.loginState.loggedIn){
+            this.$notify({
+                title:'提示',
+                message:'请先登录',
+                type:"warning"
+            })
+            this.$router.push({
+                name:'medical-system-login'
+            })
+        }
+    },
     computed: {
         calendar_value() {
             return new Date()

@@ -14,7 +14,10 @@ export default new Router({
         {
             path: '/',
             name: 'index',
-            component: () => import('@/pages/Index')
+            component: () => import('@/pages/Index'),
+            meta:{
+                needAuth: true
+            }
         },
         {
             path: '/login',

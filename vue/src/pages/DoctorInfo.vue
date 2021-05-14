@@ -42,6 +42,7 @@
 
 <script>
 import {get} from '@/utils/request'
+
 export default {
     name: "DoctorInfo",
     data() {
@@ -62,13 +63,13 @@ export default {
         let dID = this.$store.state.loginState.loginID
         if (dID !== undefined && dID.length > 0) {
             //load data with current doctor
-            let req = get('/api/v1/doctor/getDoctorByID',{
-                params:{
-                    doctorID:dID
+            let req = get('/api/v1/doctor/getDoctorByID', {
+                params: {
+                    doctorID: dID
                 }
             })
-            req.then((res)=>{
-                if (res.success){
+            req.then((res) => {
+                if (res.success) {
                     this.doctor = res.content
                     this.temp_doctor = this.doctor
                 }
@@ -78,6 +79,18 @@ export default {
     computed: {
         readySubmit() {
             return this.temp_doctor !== this.doctor && !this.disabled
+        }
+    },
+    beforeCreate() {
+        if (!this.$store.state.loginState.loggedIn) {
+            this.$notify({
+                title:'提示',
+                message:'请先登录',
+                type:"warning"
+            })
+            this.$router.push({
+                name: 'medical-system-login'
+            })
         }
     },
     methods: {

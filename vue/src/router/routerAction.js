@@ -7,6 +7,7 @@ router.beforeEach((to, from, next) => {
         document.title = to.meta.title
     }
     if (to.meta.needAuth && !store.state.loginState.loggedIn){
+        console.log("not logged in, jump to login page...")
         next({
             name: 'medical-system-login'
         })

@@ -140,6 +140,18 @@ export default {
             current_row:{}
         }
     },
+    beforeCreate() {
+        if (!this.$store.state.loginState.loggedIn){
+            this.$notify({
+                title:'提示',
+                message:'请先登录',
+                type:"warning"
+            })
+            this.$router.push({
+                name:'medical-system-login'
+            })
+        }
+    },
     mounted() {
         let ret = get('/api/v1/medicalRecord/get')
         ret.then(res => {

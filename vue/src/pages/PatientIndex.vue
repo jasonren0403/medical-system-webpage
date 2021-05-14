@@ -1,5 +1,9 @@
 <template>
     <div>
+        <el-breadcrumb separator-class="el-icon-arrow-right">
+            <el-breadcrumb-item :to="{ name: 'index' }">首页</el-breadcrumb-item>
+            <el-breadcrumb-item :to="{name:'patient_manage_landing'}">患者管理首页</el-breadcrumb-item>
+        </el-breadcrumb>
         <h2>患者列表</h2>
         <el-divider/>
         <div class="show-area">
@@ -26,6 +30,18 @@ export default {
         return {
             patient_loading: true,
             patients: []
+        }
+    },
+    beforeCreate() {
+        if (!this.$store.state.loginState.loggedIn){
+            this.$notify({
+                title:'提示',
+                message:'请先登录',
+                type:"warning"
+            })
+            this.$router.push({
+                name:'medical-system-login'
+            })
         }
     },
     mounted() {

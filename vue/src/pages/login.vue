@@ -3,18 +3,20 @@
         <div class="form-wrapper">
             <el-row>
                 <el-col :span="16" :offset="4">
-                    <el-form ref="form" :model="form" label-position="right" :rules="rules" show-message status-icon>
+                    <el-form ref="form" :model="form" label-position="right"
+                             :rules="rules" show-message status-icon>
                         <el-row :gutter="15">
                             <el-col :span="12">
                                 <el-form-item label="DoctorID" required prop="doctorID">
                                     <el-input placeholder="请输入要进行操作的医生ID以继续"
+                                              required
                                               v-model="form.doctorID"
                                               clearable/>
                                 </el-form-item>
                             </el-col>
                             <el-col :span="12">
                                 <el-form-item label="验证码" required prop="captchaCode">
-                                    <el-input v-model="form.captchaCode"></el-input>
+                                    <el-input v-model="form.captchaCode" required></el-input>
                                 </el-form-item>
                             </el-col>
                         </el-row>
@@ -27,7 +29,8 @@
                         <el-button-group>
                             <el-button @click.native.prevent="handleReset" type="info" icon="el-icon-refresh-right">重置表格
                             </el-button>
-                            <el-button :loading="loading" @click.native.prevent="handleLogin" type="primary">进入系统</el-button>
+                            <el-button :loading="loading" @click.native.prevent="handleLogin" type="primary">进入系统
+                            </el-button>
                         </el-button-group>
                     </el-form>
                 </el-col>
@@ -64,11 +67,11 @@ export default {
                     },
                     {
                         min: 3,
-                        trigger: 'blur',
+                        trigger: 'change',
                         message: '长度在3个字符以上'
                     }
                 ],
-                captchaCode: [{required: true, message: '请输入验证码！', trigger: 'change'}]
+                captchaCode: [{required: true, message: '请输入验证码！', trigger: 'blur'}]
             }
         }
     },
@@ -78,7 +81,13 @@ export default {
             await this.$refs["form"].validate((valid) => {
                 if (valid) {
                     this.$store.dispatch("loginState/login", this.form)
-                    this.$store.dispatch("credential/init",this.form.doctorID)
+                    this.$store.dispatch("credential/init", this.form.doctorID)
+                    this.$notify.info({
+                        title: '提示',
+                        message: '正在登录中，请稍候',
+                        offset: 100,
+                        duration: 1500
+                    })
                     setTimeout(() => {
                         this.$router.push({
                             name: 'index'
@@ -87,10 +96,10 @@ export default {
                     }, 3000)
                     return true
                 } else {
-                    // this.$notify.error({
-                    //     title:'错误',
-                    //     message:''
-                    // })
+                    this.$notify.error({
+                        title: '错误',
+                        message: '表单有误，不能提交'
+                    })
                     this.loading = false
                     this.$refs["form"].resetFields()
                     return false;
