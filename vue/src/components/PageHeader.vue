@@ -12,7 +12,6 @@
                             <el-dropdown-item icon="el-icon-exit" command="exit">退出系统</el-dropdown-item>
                         </el-dropdown-menu>
                     </el-dropdown>
-
                 </el-col>
             </el-row>
         </div>

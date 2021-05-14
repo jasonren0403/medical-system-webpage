@@ -1,51 +1,63 @@
 <template>
     <div>
+        <el-breadcrumb separator-class="el-icon-arrow-right">
+            <el-breadcrumb-item :to="{ name: 'index' }">首页</el-breadcrumb-item>
+            <el-breadcrumb-item :to="{name:'patient_manage_landing'}">患者管理首页</el-breadcrumb-item>
+            <el-breadcrumb-item>病历管理</el-breadcrumb-item>
+        </el-breadcrumb>
         <h2>病历列表</h2>
         <p>管理所有病历</p>
         <el-button @click="clearFilter" icon="el-icon-refresh-left">重置过滤器</el-button>
         <el-dropdown @command="handleFilterCommand" size="medium">
             <el-tooltip content="暂未可用，敬请期待" placement="top">
                 <div class="wrapper">
-                    <el-button icon="el-icon-s-operation" disabled>选择过滤器<i class="el-icon-arrow-down el-icon--right"></i></el-button>
+                    <el-button icon="el-icon-s-operation" disabled>选择过滤器<i
+                        class="el-icon-arrow-down el-icon--right"></i></el-button>
                 </div>
             </el-tooltip>
             <el-dropdown-menu split-button slot="dropdown">
-                <el-dropdown-item v-for="filter in filterTags" :command="filter.value" :key="filter.value" disabled>仅看{{ filter.text }}患者的
+                <el-dropdown-item v-for="filter in filterTags" :command="filter.value" :key="filter.value" disabled>
+                    仅看{{ filter.text }}患者的
                 </el-dropdown-item>
             </el-dropdown-menu>
         </el-dropdown>
-
         <el-divider/>
         <el-table :data="mrData" v-loading="data_loading" stripe
                   element-loading-text="拼命加载中"
                   element-loading-spinner="el-icon-loading"
                   :default-sort="{prop: 'time', order: 'descending'}" ref="mrTable"
                   id="mrTable">
-
             <el-table-column prop="time" label="日期" sortable/>
-            <el-table-column prop="type" label="类型" sortable/>
             <el-table-column prop="person.name" label="患者名称"
                              :filters="filterTags"
                              :filter-method="filterTag"/>
+            <el-table-column prop="type" label="类型" sortable/>
             <el-table-column type="expand">
                 <template slot-scope="props">
-                    <el-form label-position="left" inline :model="changingRecord"
+                    <el-form label-position="left" :model="changingRecord"
                              :disabled="!changeRecord">
+                        <el-form-item>
+                            <div slot="label"><i class="el-icon-user" style="margin-right:5px"></i>由……签名</div>
+                            <span>{{ props.row.signed_by.person.name }}</span>
+                        </el-form-item>
+                        <el-form-item>
+                            <div slot="label"><i class="el-icon-office-building" style="margin-right:5px"></i>所属科室</div>
+                            <span>{{ props.row.signed_by.department }}</span>
+                        </el-form-item>
                         <el-row>
-                            <el-col :span="24">
-                                <el-form-item label="具体内容">
+                            <el-col :span="12">
+                                <el-form-item>
+                                    <div slot="label"><i class="el-icon-edit-outline" style="margin-right:5px"></i>具体内容</div>
                                     <el-input type="textarea" :value="JSON.stringify(props.row.content)"></el-input>
                                 </el-form-item>
                             </el-col>
                         </el-row>
-                        <el-form-item label="由……签名">
-                            <span>{{ props.row.signed_by.person.name }}</span>
-                        </el-form-item>
-                        <el-form-item label="签名医生所属科室">
-                            <span>{{ props.row.signed_by.department }}</span>
-                        </el-form-item>
                     </el-form>
-                    <el-button type="info" style="{float:right}">修改...</el-button>
+                    <el-tooltip content="暂不可用，敬请期待" placement="bottom-end">
+                        <div class="wrapped">
+                            <el-button type="info" @click="modifyRecord" disabled>修改...</el-button>
+                        </div>
+                    </el-tooltip>
                 </template>
             </el-table-column>
             <el-table-column fixed="right" label="操作">
@@ -55,11 +67,12 @@
             </el-table-column>
         </el-table>
         <el-dialog :visible.sync="collaboratorModal" title="编辑此病历的协作医生">
-            <el-tooltip placement="bottom-start" content="添加医生">
-                <el-button round icon="el-icon-plus" plain type="success" @click=""></el-button>
-            </el-tooltip>
-            <el-tooltip placment="bottom-end" content="删除医生">
-                <el-button round icon="el-icon-minus" plain type="danger"></el-button>
+            <div>
+                <p>要添加医生，请使用上方按钮</p>
+                <p>要删除医生，请使用下方资料卡的删除按钮</p>
+            </div>
+            <el-tooltip placement="right" content="添加医生">
+                <el-button round icon="el-icon-plus" plain type="success" @click="onAddDoctor"></el-button>
             </el-tooltip>
             <el-divider/>
             <DoctorCard v-for="coldoctor in collaborators" :department="coldoctor.doctor.department"
@@ -77,9 +90,17 @@
                        title="选择要添加的医生"
                        :visible.sync="addDoc__inner"
                        append-to-body>
+                <el-select v-model="val_optId" placeholder="请选择">
+                    <el-option v-for="item in innerOptions" :key="item.value"
+                               :label="item.label"
+                               :value="item.value"
+                               :disabled="item.disabled"></el-option>
+                </el-select>
                 <div slot="footer" class="dialog-footer">
                     <el-button-group>
-                        <el-button type="success" @click="handleInnerModalConfirm">确认</el-button>
+                        <el-button type="success" @click="handleInnerModalConfirm('addDoctor')"
+                                   :loading="innerConfirm__loading">确认
+                        </el-button>
                         <el-button type="danger" @click="handleInnerModalClose">取消</el-button>
                     </el-button-group>
                 </div>
@@ -102,6 +123,8 @@ export default {
             collaborators: [],
             collaboratorModal: false,
             addDoc__inner: false,
+            innerConfirm__loading: false,
+            innerOptions: [],
             changingRecord: {},
             changeRecord: false,
             newRecordData: {
@@ -112,7 +135,9 @@ export default {
                     },
                     department: ''
                 }
-            }
+            },
+            val_optId: '',
+            current_row:{}
         }
     },
     mounted() {
@@ -172,10 +197,37 @@ export default {
         }
     },
     methods: {
+        async onAddDoctor() {
+            this.addDoc__inner = true
+            // load list
+            let allDoctors = await get('/api/v1/doctor/all')
+            if (allDoctors.success) {
+                // console.log(`collaborators: ${JSON.stringify(this.collaborators)}`)
+
+                allDoctors.contents.map((val) => {
+                    // console.log(`one of all doctors: ${JSON.stringify(val)}`)
+                    let innerReturned = false
+                    this.collaborators.forEach((val2) => {
+                        let doc = val2.doctor
+                        if (val.department === doc.department && val.person.id === doc.person.id
+                            && val.person.name === doc.person.name && val.person.age === doc.person.age) {
+                            innerReturned = true
+                        }
+                    })
+                    if (!innerReturned) {
+                        this.innerOptions.push({
+                            value: JSON.stringify(val),
+                            label: `${val.person.name} - 部门 ${val.department}`,
+                        })
+                    }
+                })
+                // filter innerOptions
+            }
+        },
         handleFilterCommand(command) {
             // console.log("change filter to ",command)
             // todo: this filter-change does not work. command = value
-            if (command && command.length>0) this.$refs["mrTable"].$emit('filter-change', command)
+            if (command && command.length > 0) this.$refs["mrTable"].$emit('filter-change', command)
         },
         async fetchRecords() {
             let res = await ('/api/v1/medicalRecord/get');
@@ -216,16 +268,62 @@ export default {
             this.addDoc__inner = false;
         },
         handleClick(row) {
-            console.log(row)
+            console.log(`rowClick:${JSON.stringify(row)}`)
+            this.current_row = row
             this.handleOpenDialog(row)
         },
-        handleInnerModalConfirm() {
-            // todo: submit to API: Remove collaborator
-            this.addDoc__inner = false;
+        async handleInnerModalConfirm(type) {
+            this.innerConfirm__loading = true
+            let url = ''
+            switch (type) {
+                case "delDoctor":
+                    url = '/api/v1/doctor/revokeGroup'
+                    break;
+                case "addDoctor":
+                    url = '/api/v1/doctor/addToGroup'
+                    break;
+                default:
+                    return;
+            }
+            console.log(`select:${this.val_optId}`)
+            let req = await post(url, {
+                doctor:JSON.parse(this.val_optId),
+                pID:this.current_row.person.id,
+                filter:{
+                    //todo: locate record
+                }
+            })
+            if (req.success) {
+                // update this.collaborators
+                // let res = await get('/api/v1/medicalRecord/get',{
+                //     params:{
+                //         patientID:''
+                //     }
+                // })
+                this.collaborators.sort((a, b) => {
+                    if (a.role === "manager") {
+                        return b.role === "manager" ? 0 : -1
+                    } else if (a.role === "member") {
+                        return b.role === "member" ? 0 : 1
+                    } else {
+                        return 0
+                    }
+                })
+                setTimeout(() => {
+                    this.$message(`type: ${type} ok`)
+                    this.innerConfirm__loading = false;
+                    this.addDoc__inner = false;
+                }, 1500)
+            }else{
+                setTimeout(()=>{
+                    this.innerConfirm__loading = false;
+                },500)
+            }
         },
         handleClose() {
             this.collaborators = []
             this.collaboratorModal = false
+            this.current_row = {}
         },
         handleOpenDialog(rowData) {
             this.collaboratorModal = true
@@ -249,20 +347,8 @@ export default {
         async modifyRecord() {
             let res = await post('/api/v1/medicalRecord/', this.changingRecord)
             if (res.success) {
+                this.$message(JSON.stringify(this.changingRecord))
                 this.changingRecord = {}
-            }
-        },
-        async handleChange(val) {
-            if (val.indexOf('doctorID') !== -1) {
-                let res = await get('/api/v1/doctor/getDoctorByID',
-                    {
-                        params: {
-                            dID: this.$store.state.loginState.loginID
-                        }
-                    })
-                if (res.success) {
-                    this.newRecordData.signed_by = res.content
-                }
             }
         }
     }

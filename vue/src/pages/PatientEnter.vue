@@ -1,5 +1,10 @@
 <template>
     <div>
+        <el-breadcrumb separator-class="el-icon-arrow-right">
+            <el-breadcrumb-item :to="{ name: 'index' }">首页</el-breadcrumb-item>
+            <el-breadcrumb-item :to="{name:'patient_manage_landing'}">患者管理首页</el-breadcrumb-item>
+            <el-breadcrumb-item>新建患者/病历</el-breadcrumb-item>
+        </el-breadcrumb>
         <h2>患者信息登记</h2>
         <el-divider>在这里新建一个患者信息</el-divider>
         <el-card :body-style="{'margin-bottom': '18px'}">
@@ -73,7 +78,7 @@
                     <el-button type="danger" icon="el-icon-refresh-left"
                                @click.native.prevent="handleReset">重置
                     </el-button>
-                    <el-button type="primary" @click.native.prevent="submitForm()">提交
+                    <el-button type="primary" @click.native.prevent="submitForm">提交
                         <i class="el-icon-check el-icon--right"></i>
                     </el-button>
                 </el-button-group>
@@ -82,13 +87,14 @@
         <el-divider>或是添加一个新病历</el-divider>
         <el-card :body-style="{'margin-bottom':'18px'}">
             <div class="el-card__body">
-                <el-steps finish-status="success" :active="step__active">
+                <el-steps finish-status="success" :active="step__active" align-center style="margin-bottom: 15px">
                     <el-step title="选择病人"></el-step>
                     <el-step title="登记信息"></el-step>
                     <el-step title="签名"></el-step>
                 </el-steps>
                 <div v-if="step__active===0">
-                    <el-form ref="select_patient" key="select_patient" :rules="formRule.selectPatient">
+                    <el-form ref="select_patient" key="select_patient" :rules="formRule.selectPatient"
+                    :validate-event="false" :model="newRecordForm">
                         <el-form-item prop="patientID" label="请选择要登记信息的病人" required>
                             <el-select v-model="newRecordForm.patientID"
                                        filterable placeholder="请选择…"
@@ -96,7 +102,9 @@
                                 <el-option v-for="item in patients" :value="item.value" :key="item.value"
                                            :label="item.label">
                                     <slot name="currentLabel">
-                                        <b>{{ item.label }}</b>&nbsp;&nbsp;<small>{{ item.age }}岁</small>
+                                        <b>{{ item.label }}</b>&nbsp;&nbsp;<small>{{
+                                            item.age | nonnegativable
+                                        }}岁</small>
                                     </slot>
                                 </el-option>
                             </el-select>
@@ -107,7 +115,8 @@
                     </el-button>
                 </div>
                 <div v-else-if="step__active===1">
-                    <el-form ref="init_info" key="init_info" :rules="formRule.initInfo">
+                    <el-form ref="init_info" key="init_info" :validate-event="false" :rules="formRule.initInfo"
+                             :model="newRecordForm">
                         <el-form-item prop="type" label="病历类型" required>
                             <el-input v-model="newRecordForm.type" clearable/>
                         </el-form-item>
@@ -131,9 +140,9 @@
                 <div v-else> <!--step__active===2-->
                     <el-form ref="doctor" key="doctor"
                              :rules="formRule.signWithSignature" :model="newRecordForm.signature">
-                        <el-form-item prop="signature"><label>确认以医生<b>{{ this.$store.state.loginState.loginID }}</b>身份签名</label>
-                            <el-checkbox v-model="signatureChecked"
-                                         @change="handleChange">确认
+                        <el-form-item prop="signature"><label>确认以医生<b
+                            style="margin:0 2px">{{ this.newRecordForm.signature.person.name }}</b>身份签名</label>
+                            <el-checkbox v-model="signatureChecked">确认
                             </el-checkbox>
                         </el-form-item>
                     </el-form>
@@ -141,10 +150,10 @@
                         <el-collapse-item title="医生身份查看" name="infoCollapse">
                             <el-row :gutter="5">
                                 <el-col :span="6">
-                                    <span>ID:{{ this.newRecordForm.signature.id }}</span>
+                                    <span>ID:{{ this.newRecordForm.signature.person.id }}</span>
                                 </el-col>
                                 <el-col :span="6">
-                                    <span>Name:{{ this.newRecordForm.signature.name }}</span>
+                                    <span>Name:{{ this.newRecordForm.signature.person.name }}</span>
                                 </el-col>
                             </el-row>
                         </el-collapse-item>
@@ -215,18 +224,17 @@ export default {
         }
     },
     methods: {
-        handleChange(val) {
-            if (val === true) {
-                let req = get('/api/v1/doctor/getDoctorByID', {
-                    params: {
-                        doctorID: this.$store.state.loginState.loginID
-                    }
-                })
-                req.then((res) => {
-                    if (res.success) {
-                        this.newRecordForm.signature = res.content
-                    }
-                })
+        async loadDoctor() {
+            let req = await get('/api/v1/doctor/getDoctorByID', {
+                params: {
+                    doctorID: this.$store.state.loginState.loginID
+                }
+            })
+            if (req.success) {
+                // console.log("Doctor signature:",req.content)
+                this.newRecordForm.signature = req.content
+                // console.log("this.newRecordForm.signature",this.newRecordForm.signature)
+                // this.$message("加载医生信息成功！")
             }
         },
         rewriteForm() {
@@ -245,7 +253,7 @@ export default {
                     },
                     signature: {}
                 }
-            })
+            }).catch(()=>{})
         },
         next() {
             switch (this.step__active) {
@@ -261,14 +269,43 @@ export default {
                     }
                     break;
                 case 1:
-                    this.step__active++;
-                    this.$refs["select_patient"].clearValidate()
+                    this.$refs["init_info"].validate((valid) => {
+                        if (valid) {
+                            this.step__active++;
+                            this.loadDoctor()
+                        } else {
+                            this.$message({
+                                showClose: true,
+                                message: "表单验证不通过！",
+                                type: "error"
+                            })
+                        }
+                    })
                     break;
                 case 2:
-                    this.$alert("确认提交？" + JSON.stringify(this.newRecordForm))
-                    // submit final form
-                    this.step__active = 0;
-
+                    const h = this.$createElement
+                    this.$msgbox({
+                        title: "确认提交？",
+                        message: h('p', null, [
+                            h('p', null, '提示：'),
+                            h('span', {style:{margin:"0 3px"}}, JSON.stringify(this.newRecordForm))
+                        ]),
+                        showCancelButton: true,
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        // submit final form
+                        this.submitForm().then((res) => {
+                            if (res) {
+                                this.$message({
+                                    type: 'success',
+                                    message: '提交成功！'
+                                })
+                                this.step__active = 0
+                            }
+                        })
+                    }).catch(()=>{})
                     break;
                 default:
                     break;
@@ -282,10 +319,21 @@ export default {
             // console.log(this.newRecordForm)
             let res = await post('/api/v1/medicalRecord/new', this.newRecordForm)
             if (res.success) {
-                this.newRecordForm = {}
-                this.step__active = 0
-                this.$message('提交成功！')
+                this.$nextTick(() => {
+                    this.newRecordForm = {
+                        patientID: '',
+                        type: '',
+                        time: new Date(),
+                        content: {
+                            value: ''
+                        },
+                        signature: {}
+                    }
+                    this.step__active = 0
+                })
+                return true
             }
+            return false
         },
         handleReset() {
             this.$refs["form"].resetFields()

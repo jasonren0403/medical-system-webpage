@@ -19,6 +19,7 @@ module.exports = {
         ctx.body = {
             message: '接口正常工作',
             checkTime: new Date().getTime(),
+            success:true,
             query
         }
     }

@@ -4,7 +4,7 @@ module.exports = {
     async handler(ctx, next) {
         let params = ctx.query
         let id = params.patientID
-        if (id === undefined) { //getAll
+        if (id === undefined) { //todo: getAllPatients
             ctx.body = {
                 success: true,
                 contents: [{

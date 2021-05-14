@@ -4,7 +4,6 @@ module.exports = {
     async handler(ctx, next) {
         let params = ctx.query
         let dID = params.doctorID
-        // console.log(ctx.body)
         // todo: interact with fabric gateway to find the doctor(chaincode function:QueryDoctorByID)
         ctx.body = {
             success: true,

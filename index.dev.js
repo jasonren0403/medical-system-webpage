@@ -29,6 +29,7 @@ async function registerApp () {
         await next()
     })
     let gw = Fgateway.getInstance()
+    log.info("Fabric gateway started")
     try {
         // node 端中间件和路由
         await registerMiddlewares();

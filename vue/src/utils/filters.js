@@ -13,3 +13,8 @@ Vue.filter("fallbackEmptyable",function(value){
     }
     return value
 })
+
+Vue.filter("nonnegativable",function(value){
+    if(!value || typeof value !== "number") return value
+    else return Math.abs(value)
+})

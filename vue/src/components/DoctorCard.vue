@@ -13,11 +13,13 @@
                     </el-row>
                 </div>
                 <p>医生姓名：<span class="value">{{people.name}}</span></p>
-                <p>医生年龄：<span class="value">{{people.age}}</span></p>
+                <p>医生年龄：<span class="value">{{people.age | nonnegativable}}</span></p>
                 <p>医生科室：<span class="value">{{department |fallbackEmptyable }}</span></p>
                 <el-divider/>
-                <el-button :disabled="this.$props.role==='manager'"
-                           @onclick="delThisCard" type="danger">删除</el-button>
+                <el-tooltip placment="bottom-end" :content="this.$props.role==='manager'?'不允许删除主治医师':'删除医生'">
+                    <el-button :disabled="this.$props.role==='manager'"
+                               @onclick="delThisCard" type="danger">删除</el-button>
+                </el-tooltip>
             </el-card>
         </el-col>
     </el-row>

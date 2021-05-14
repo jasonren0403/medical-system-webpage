@@ -50,7 +50,7 @@ module.exports = {
             }, {
                 "collaborators": [{
                     "doctor": {
-                        "person": {"id": "doct1", "name": "Banana", "age": 25},
+                        "person": {"id": "doct2", "name": "Banana", "age": 25},
                         "department": "Dep1"
                     }, "role": "manager"
                 }],
@@ -58,11 +58,11 @@ module.exports = {
                 "type": "Type2",
                 "time": "2021-4-10 11:45:14",
                 "content": {},
-                "signed_by": {"person": {"id": "doct1", "name": "Banana", "age": 25}, "department": "Dep1"}
+                "signed_by": {"person": {"id": "doct2", "name": "Banana", "age": 25}, "department": "Dep1"}
             }, {
                 "collaborators": [{
                     "doctor": {
-                        "person": {"id": "doct2", "name": "Apple", "age": 24},
+                        "person": {"id": "doct1", "name": "Apple", "age": 24},
                         "department": "Dep1"
                     }, "role": "manager"
                 }],
@@ -70,7 +70,7 @@ module.exports = {
                 "type": "Type3",
                 "time": "2021-5-10 11:45:14",
                 "content": {},
-                "signed_by": {"person": {"id": "doct2", "name": "Apple", "age": 24}, "department": "Dep1"}
+                "signed_by": {"person": {"id": "doct1", "name": "Apple", "age": 24}, "department": "Dep1"}
             }]
         }
     }
