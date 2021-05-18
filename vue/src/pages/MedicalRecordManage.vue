@@ -68,20 +68,22 @@
         </el-table>
         <el-dialog :visible.sync="collaboratorModal" title="编辑此病历的协作医生">
             <div>
-                <p>要添加医生，请使用上方按钮</p>
+                <p>要添加医生，请使用上方加号按钮</p>
                 <p>要删除医生，请使用下方资料卡的删除按钮</p>
             </div>
             <el-tooltip placement="right" content="添加医生">
                 <el-button round icon="el-icon-plus" plain type="success" @click="onAddDoctor"></el-button>
             </el-tooltip>
             <el-divider/>
-            <DoctorCard v-for="coldoctor in collaborators" :department="coldoctor.doctor.department"
-                        :people="coldoctor.doctor.person" :card_per_row="1" :role="coldoctor.role"
-                        :key="coldoctor.doctor.person.id"
-                        @doctorRemoved="onDoctorRemoval(coldoctor)"/>
+            <div :v-show="collaboratorModal">
+                <DoctorCard v-for="coldoctor in collaborators" :department="coldoctor.doctor.department"
+                            :people="coldoctor.doctor.person" :card_per_row="1" :role="coldoctor.role"
+                            :key="coldoctor.doctor.person.id" :precord="record_id"
+                            @doctorRemoved="onDoctorRemoval(coldoctor)"/>
+            </div>
             <span slot="footer" class="dialog-footer">
                 <el-button-group>
-                    <el-button type="success" @click="fetchRecords">确认</el-button>
+                    <el-button type="success" @click="handleClose();fetchRecords">确认</el-button>
                     <el-button type="danger" @click="handleClose">取消</el-button>
                 </el-button-group>
             </span>
@@ -127,6 +129,7 @@ export default {
             innerOptions: [],
             changingRecord: {},
             changeRecord: false,
+            record_id:"",
             newRecordData: {
                 signed_by: {
                     person: {
@@ -242,6 +245,7 @@ export default {
             if (command && command.length > 0) this.$refs["mrTable"].$emit('filter-change', command)
         },
         async fetchRecords() {
+            console.log('fetch records <all>')
             let res = await ('/api/v1/medicalRecord/get');
             if (res.success) {
                 res.contents.forEach(val => {
@@ -302,16 +306,16 @@ export default {
                 doctor:JSON.parse(this.val_optId),
                 pID:this.current_row.person.id,
                 filter:{
-                    //todo: locate record
+                    record_id: this.record_id
                 }
             })
             if (req.success) {
-                // update this.collaborators
-                // let res = await get('/api/v1/medicalRecord/get',{
-                //     params:{
-                //         patientID:''
-                //     }
-                // })
+                if (type==="addDoctor"){
+                    this.collaborators.push({
+                        role:"member",
+                        doctor:JSON.parse(this.val_optId)
+                    })
+                }
                 this.collaborators.sort((a, b) => {
                     if (a.role === "manager") {
                         return b.role === "manager" ? 0 : -1
@@ -336,10 +340,12 @@ export default {
             this.collaborators = []
             this.collaboratorModal = false
             this.current_row = {}
+            this.record_id = ""
         },
         handleOpenDialog(rowData) {
             this.collaboratorModal = true
             this.collaborators = rowData.collaborators
+            this.record_id = rowData.record_id
             this.collaborators.sort((a, b) => {
                 if (a.role === "manager") {
                     return b.role === "manager" ? 0 : -1
@@ -351,8 +357,8 @@ export default {
             })
         },
         onDoctorRemoval(collaborator) {
+            console.log(`Remove: ${JSON.stringify(collaborator)} from ${JSON.stringify(this.collaborators)}`)
             this.collaborators = this.collaborators.filter(value => {
-                console.log(`Remove: ${value},${collaborator}`)
                 return value !== collaborator
             })
         },

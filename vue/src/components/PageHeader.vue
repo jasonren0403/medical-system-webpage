@@ -6,7 +6,8 @@
                     <el-dropdown trigger="click" @command="handleCommand">
                         <el-tooltip :content="'当前用户：'.concat(doctorName)" placement="bottom">
                             <el-button type="primary">
-                                当前用户: {{ doctorName | striplongstr }}<i class="el-icon-user-solid el-icon--right"></i></el-button>
+                                当前用户: {{ doctorName | striplongstr }}<i class="el-icon-user-solid el-icon--right"></i>
+                            </el-button>
                         </el-tooltip>
                         <el-dropdown-menu slot="dropdown">
                             <el-dropdown-item icon="el-icon-exit" command="exit">退出系统</el-dropdown-item>
@@ -39,7 +40,7 @@ export default {
     computed: {
         ...mapState({
             loggedIn: state => state.loginState.loggedIn,
-            logID: state=>state.loginState.loginID,
+            logID: state => state.loginState.loginID,
             doctorName: state => state.credential.name
         })
     },
@@ -50,23 +51,24 @@ export default {
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
-                this.$store.dispatch('loginState/logout',this.logID)
-                this.$notify.info({
-                    title:'提示',
-                    message:'正在登出中，请稍候',
-                    offset: 100,
-                    duration:1500
-                })
+                const loading = this.$loading({
+                    lock: true,
+                    text: '正在登出中，请稍候',
+                    spinner: 'el-icon-loading',
+                    background: 'rgba(0, 0, 0, 0.7)'
+                });
                 setTimeout(() => {
+                    this.$store.dispatch('loginState/logout', this.logID)
                     this.reload()
                     this.$router.push({
                         name: 'medical-system-login'
                     })
+                    loading.close()
                     this.$message({
                         type: 'success',
                         message: '已退出系统'
                     });
-                }, 3000)
+                }, 1500)
             }).catch(() => {
 
             });

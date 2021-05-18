@@ -9,26 +9,27 @@
         <el-divider>在这里新建一个患者信息</el-divider>
         <el-card :body-style="{'margin-bottom': '18px'}">
             <div class="el-card__body">
-                <el-form ref="form" :model="newPatientForm" label-width="80px" status-icon>
-                    <el-collapse>
+                <el-form ref="form" :model="newPatientForm" label-width="80px" status-icon
+                         :rules="formRule.newPatient">
+                    <el-collapse accordion>
                         <el-collapse-item id="basics" title="基本身份信息" name="1">
                             <el-row :gutter="20">
                                 <el-col :span="12">
-                                    <el-form-item label="身份id" prop="pID">
+                                    <el-form-item label="身份id" prop="pID" required>
                                         <el-input v-model="newPatientForm.pID" placeholder="一般为身份证数字"></el-input>
                                     </el-form-item>
                                 </el-col>
                                 <el-col :span="12">
-                                    <el-form-item label="姓名" prop="name">
+                                    <el-form-item label="姓名" prop="name" required>
                                         <el-input v-model="newPatientForm.name" placeholder="患者姓名"></el-input>
                                     </el-form-item>
                                 </el-col>
                             </el-row>
-                            <el-form-item label="年龄" prop="age">
+                            <el-form-item label="年龄" prop="age" required>
                                 <el-slider :min="0" :max="130"
                                            :format-tooltip="formatAgeStr"
                                            :marks="{0:'0岁',18:'18岁',50:'50岁'}"
-                                           show-input v-model="newPatientForm.age"></el-slider>
+                                           show-input v-model.number="newPatientForm.age"></el-slider>
                             </el-form-item>
                         </el-collapse-item>
                         <el-collapse-item id="extended" title="附加信息" name="2">
@@ -78,7 +79,7 @@
                     <el-button type="danger" icon="el-icon-refresh-left"
                                @click.native.prevent="handleReset">重置
                     </el-button>
-                    <el-button type="primary" @click.native.prevent="submitForm">提交
+                    <el-button type="success" @click.native.prevent="submitForm('newPatientForm')">提交
                         <i class="el-icon-check el-icon--right"></i>
                     </el-button>
                 </el-button-group>
@@ -94,7 +95,7 @@
                 </el-steps>
                 <div v-if="step__active===0">
                     <el-form ref="select_patient" key="select_patient" :rules="formRule.selectPatient"
-                    :validate-event="false" :model="newRecordForm">
+                             :validate-event="false" :model="newRecordForm">
                         <el-form-item prop="patientID" label="请选择要登记信息的病人" required>
                             <el-select v-model="newRecordForm.patientID"
                                        filterable placeholder="请选择…"
@@ -176,14 +177,14 @@ import {get, post} from "@/utils/request";
 export default {
     name: "PatientEnter",
     beforeCreate() {
-        if (!this.$store.state.loginState.loggedIn){
+        if (!this.$store.state.loginState.loggedIn) {
             this.$notify({
-                title:'提示',
-                message:'请先登录',
-                type:"warning"
+                title: '提示',
+                message: '请先登录',
+                type: "warning"
             })
             this.$router.push({
-                name:'medical-system-login'
+                name: 'medical-system-login'
             })
         }
     },
@@ -229,7 +230,12 @@ export default {
                     },]
                 },
                 initInfo: {},
-                signWithSignature: {}
+                signWithSignature: {},
+                newPatient: {
+                    pid: [{required: true, trigger: 'blur'}],
+                    name: [{required: true, trigger: 'blur'}],
+                    age: [{required: true, trigger: 'blur', type: "number", min: 0, max: 130}]
+                }
             },
             step__active: 0,
             loading: false
@@ -265,7 +271,8 @@ export default {
                     },
                     signature: {}
                 }
-            }).catch(()=>{})
+            }).catch(() => {
+            })
         },
         next() {
             switch (this.step__active) {
@@ -300,7 +307,7 @@ export default {
                         title: "确认提交？",
                         message: h('p', null, [
                             h('p', null, '提示：'),
-                            h('span', {style:{margin:"0 3px"}}, JSON.stringify(this.newRecordForm))
+                            h('span', {style: {margin: "0 3px"}}, JSON.stringify(this.newRecordForm))
                         ]),
                         showCancelButton: true,
                         confirmButtonText: '确定',
@@ -308,16 +315,18 @@ export default {
                         type: 'warning'
                     }).then(() => {
                         // submit final form
-                        this.submitForm().then((res) => {
+                        this.submitForm('newRecordForm').then((res) => {
                             if (res) {
-                                this.$message({
-                                    type: 'success',
-                                    message: '提交成功！'
+                                this.$notify({
+                                    title: '成功',
+                                    message: '提交成功！',
+                                    type: "success"
                                 })
                                 this.step__active = 0
                             }
                         })
-                    }).catch(()=>{})
+                    }).catch(() => {
+                    })
                     break;
                 default:
                     break;
@@ -327,27 +336,85 @@ export default {
             if (value === null) return ""
             return value.toString() + '岁'
         },
-        async submitForm() {
-            // console.log(this.newRecordForm)
-            let res = await post('/api/v1/medicalRecord/new', this.newRecordForm)
-            if (res.success) {
-                this.$nextTick(() => {
-                    this.newRecordForm = {
-                        patientID: '',
-                        type: '',
-                        time: new Date(),
-                        content: {
-                            value: ''
-                        },
-                        signature: {}
+        async submitForm(type) {
+            let url = '';
+            let form;
+            switch (type) {
+                case 'newPatientForm':
+                    url = '/api/v1/patient/new'
+                    form = this.newPatientForm
+                    break;
+                case 'newRecordForm':
+                    url = '/api/v1/medicalRecord/new'
+                    form = this.newRecordForm
+                    break;
+                default:
+                    console.warn("unknown form type:", type)
+                    return
+            }
+            let validated = true
+            if (type === "newPatientForm") {
+                await this.$refs["form"].validate((valid) => {
+                    if (!valid) {
+                        validated = false
+                        return this.$notify.error({
+                            title: "错误",
+                            message: "表单验证不通过！"
+                        })
                     }
-                    this.step__active = 0
+                })
+            }
+            if (!validated) return
+            let res = await post(url, form)
+            if (res.success) {
+                this.$refs["form"].resetFields()
+                this.$nextTick(() => {
+                    switch (type) {
+                        case 'newPatientForm':
+                            this.newPatientForm = {
+                                pID: '',
+                                name: '',
+                                age: 44,
+                                country: '',
+                                region: '',
+                                birthday: new Date(),
+                                isMarried: false,
+                                career: '',
+                                address: ''
+                            }
+                            this.$notify({
+                                title: '成功',
+                                message: '提交成功！',
+                                type: "success"
+                            })
+                            break;
+                        case 'newRecordForm':
+                            this.newRecordForm = {
+                                patientID: '',
+                                type: '',
+                                time: new Date(),
+                                content: {
+                                    value: ''
+                                },
+                                signature: {}
+                            }
+                            this.step__active = 0
+                            break;
+                        default:
+                            console.warn("unknown type:", type)
+                    }
                 })
                 return true
             }
             return false
         },
         handleReset() {
+            this.$message({
+                message: "表单已清空，请重新填写",
+                type: "info",
+                showClose: true,
+                duration: 1200
+            })
             this.$refs["form"].resetFields()
         },
         async fetchPatients() {

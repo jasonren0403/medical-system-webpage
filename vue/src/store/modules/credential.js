@@ -15,12 +15,15 @@ export default {
             state.name = name
         },
         setRole(state, role) {
-            if (role !== "patient" || role !== "doctor") return
             state.role = role
         }
     },
     actions: {
         async init({commit, state}, dID) {
+            if (localStorage.getItem('loginID')!==undefined){
+                dID = localStorage.getItem('loginID')
+                console.log("Use localStorage loginID")
+            }
             let res = await get('/api/v1/doctor/getDoctorByID', {
                 params: {
                     doctorID: dID

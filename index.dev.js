@@ -9,7 +9,6 @@ const glob = require('glob')
 const koaWebpack = require('koa-webpack')
 const koaStatic = require('koa-static')
 const history = require('koa2-history-api-fallback')
-const Fgateway = require('./utils/FabricGateway')
 
 const {PORT} = require('./config/server')
 const {getRouterPath, log} = require('./utils/framework')
@@ -28,8 +27,6 @@ async function registerApp () {
         log.info(`[${new Date().toLocaleString()}] ${ctx.method} => ${ctx.url} hasbody: ${ctx.method!=='GET'&&JSON.stringify(ctx.request.body)}`)
         await next()
     })
-    let gw = Fgateway.getInstance()
-    log.info("Fabric gateway started")
     try {
         // node 端中间件和路由
         await registerMiddlewares();
@@ -53,7 +50,6 @@ async function registerApp () {
     } catch (e) {
         log.error(e)
         log.error('开发环境服务器启动失败\n\n')
-        gw.delInstance()
     }
 }
 

@@ -29,7 +29,7 @@
                         <el-button-group>
                             <el-button @click.native.prevent="handleReset" type="info" icon="el-icon-refresh-right">重置表格
                             </el-button>
-                            <el-button :loading="loading" @click.native.prevent="handleLogin" type="primary">进入系统
+                            <el-button @click.native.prevent="handleLogin" type="primary">进入系统
                             </el-button>
                         </el-button-group>
                     </el-form>
@@ -57,7 +57,6 @@ export default {
                 csrfVal: '',
                 rememOperator: false
             },
-            loading: false,
             rules: {
                 doctorID: [
                     {
@@ -77,30 +76,28 @@ export default {
     },
     methods: {
         async handleLogin() {
-            this.loading = true
             await this.$refs["form"].validate((valid) => {
                 if (valid) {
-                    this.$store.dispatch("loginState/login", this.form)
                     this.$store.dispatch("credential/init", this.form.doctorID)
-                    this.$notify.info({
-                        title: '提示',
-                        message: '正在登录中，请稍候',
-                        offset: 100,
-                        duration: 1500
-                    })
+                    const loading = this.$loading({
+                        lock: true,
+                        text: '正在登录中，请稍候',
+                        spinner: 'el-icon-loading',
+                        background: 'rgba(0, 0, 0, 0.7)'
+                    });
                     setTimeout(() => {
+                        this.$store.dispatch("loginState/login", this.form)
                         this.$router.push({
                             name: 'index'
                         })
-                        this.loading = false;
-                    }, 3000)
+                        loading.close()
+                    }, 1500)
                     return true
                 } else {
                     this.$notify.error({
                         title: '错误',
                         message: '表单有误，不能提交'
                     })
-                    this.loading = false
                     this.$refs["form"].resetFields()
                     return false;
                 }

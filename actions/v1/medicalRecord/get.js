@@ -4,8 +4,18 @@ module.exports = {
     async handler(ctx, next) {
         let params = ctx.query
         let id = params.patientID
+        let record_id = params.record_id
         // console.log(ctx.body)
         // todo: interact with fabric gateway (chaincode function:GetMedicalRecord(pid))
+        if (record_id!==undefined){
+            // filter record_id
+            ctx.body = {
+                success:true,
+                content:{
+
+                }
+            }
+        }
         ctx.body = {
             success: true,
             contents: [{
@@ -19,6 +29,7 @@ module.exports = {
                     "role": "manager"
                 }],
                 "id": "p1",
+                "record_id":"testtest1",
                 "type": "Type1",
                 "time": "2021-4-7 13:05:25",
                 "content": {},
@@ -31,6 +42,7 @@ module.exports = {
                     }, "role": "manager"
                 }],
                 "id": "p1",
+                "record_id":"testtest2",
                 "type": "Type2",
                 "time": "2021-4-8 11:45:14",
                 "content": {"key1": true, "key2": "string"},
@@ -44,6 +56,7 @@ module.exports = {
                 }],
                 "id": "p1",
                 "type": "Type3",
+                "record_id":"testtest3",
                 "time": "2021-5-10 11:45:14",
                 "content": {},
                 "signed_by": {"person": {"id": "doct1", "name": "Apple", "age": 24}, "department": "Dep1"}
@@ -55,6 +68,7 @@ module.exports = {
                     }, "role": "manager"
                 }],
                 "id": "p2",
+                "record_id":"testtest4",
                 "type": "Type2",
                 "time": "2021-4-10 11:45:14",
                 "content": {},
@@ -67,6 +81,7 @@ module.exports = {
                     }, "role": "manager"
                 }],
                 "id": "p2",
+                "record_id":"testtest5",
                 "type": "Type3",
                 "time": "2021-5-10 11:45:14",
                 "content": {},

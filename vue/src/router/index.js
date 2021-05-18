@@ -33,23 +33,33 @@ export default new Router({
             name: 'doctor-info',
             component: () => import('@/pages/DoctorInfo'),
             meta: {
-                title: '智慧医疗系统 - 医生信息管理'
+                title: '智慧医疗系统 - 医生信息管理',
+                needAuth: true
             }
         },
         {
             path: '/p/',
             name: 'patient_manage_landing',
-            component: () => import("@/pages/PatientIndex")
+            component: () => import("@/pages/PatientIndex"),
+            meta: {
+                needAuth: true
+            }
         },
         {
             path: '/pnew',
             name: 'new_patient',
-            component: () => import('../pages/PatientEnter')
+            component: () => import('../pages/PatientEnter'),
+            meta: {
+                needAuth: true
+            }
         },
         {
             path: '/mr',
             name: 'record_manage',
-            component: () => import('../pages/MedicalRecordManage')
+            component: () => import('../pages/MedicalRecordManage'),
+            meta: {
+                needAuth: true
+            }
         },
         {
             path: '*',

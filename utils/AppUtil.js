@@ -6,39 +6,50 @@
 
 'use strict';
 
-const fs = require('fs');
-const path = require('path');
-
 exports.buildCCPOrg1 = () => {
-    // load the common connection configuration file
-    const ccpPath = path.resolve(__dirname, '..', '..', 'test-network', 'organizations', 'peerOrganizations', 'org1.example.com', 'connection-org1.json');
-    const fileExists = fs.existsSync(ccpPath);
-    if (!fileExists) {
-        throw new Error(`no such file or directory: ${ccpPath}`);
-    }
-    const contents = fs.readFileSync(ccpPath, 'utf8');
-
     // build a JSON object from the file contents
-    const ccp = JSON.parse(contents);
-
-    console.log(`Loaded the network configuration located at ${ccpPath}`);
+    const ccp = {
+        "PeerOrgs": [
+            {
+                "Name": "Org1",
+                "Domain": "org1.example.com",
+                "EnableNodeOUs": true,
+                "Template": {
+                    "Count": 1,
+                    "SANS": [
+                        "localhost"
+                    ]
+                },
+                "Users": {
+                    "Count": 1
+                }
+            }
+        ]
+    };
+    console.log(`Loaded the network configuration CCPOrg1`);
     return ccp;
 };
 
 exports.buildCCPOrg2 = () => {
-    // load the common connection configuration file
-    const ccpPath = path.resolve(__dirname, '..', '..', 'test-network',
-        'organizations', 'peerOrganizations', 'org2.example.com', 'connection-org2.json');
-    const fileExists = fs.existsSync(ccpPath);
-    if (!fileExists) {
-        throw new Error(`no such file or directory: ${ccpPath}`);
+    const ccp = {
+        "PeerOrgs": [
+            {
+                "Name": "Org2",
+                "Domain": "org2.example.com",
+                "EnableNodeOUs": true,
+                "Template": {
+                    "Count": 1,
+                    "SANS": [
+                        "localhost"
+                    ]
+                },
+                "Users": {
+                    "Count": 1
+                }
+            }
+        ]
     }
-    const contents = fs.readFileSync(ccpPath, 'utf8');
-
-    // build a JSON object from the file contents
-    const ccp = JSON.parse(contents);
-
-    console.log(`Loaded the network configuration located at ${ccpPath}`);
+    console.log(`Loaded the network configuration located at CCPOorg2`);
     return ccp;
 };
 
