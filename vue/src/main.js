@@ -14,8 +14,8 @@ import '../static/css/common.css';
 
 Vue.config.productionTip = false
 
-import FabricInstance from "../../utils/FabricGateway";
-Vue.prototype.$fabric = new FabricInstance()
+// import FabricInstance from "../../utils/FabricGateway";
+// Vue.prototype.$fabric = new FabricInstance()
 
 Vue.use(ElementUI);
 

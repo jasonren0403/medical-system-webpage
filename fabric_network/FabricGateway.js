@@ -1,5 +1,5 @@
-// const { Gateway, Wallets } = require('fabric-network');
-const {Gateway, Wallets} = function () {} // for webpage only
+const { Gateway, Wallets } = require('fabric-network');
+// const {Gateway, Wallets} = function () {} // for webpage debug only
 // const FabricCAServices = require('fabric-ca-client');
 const path = require('path');
 const { buildCAClient, registerAndEnrollUser, enrollAdmin } = require('./CAUtil');
@@ -14,7 +14,7 @@ const org1UserId = 'appUser';
 let FabricInstance = (function(){
     let instance = null;
     return function(){
-        if(instance){
+        if(instance!==undefined){
             return instance
         }
         console.log("[Fabric Gateway] Fabric Gateway constructs")
@@ -22,12 +22,12 @@ let FabricInstance = (function(){
             this.register().then((res)=>{
                 if(res!==undefined){
                     this.contract = res
-                    this.contract.submitTransaction('InitLedger')
+                    this.contract.submitTransaction('Init')
                 }
             })
         }
         catch (e) {
-            console.log(`[Fabric Gateway]error:${e}`)
+            console.log(`[Fabric Gateway] error:${e}`)
         }
         return instance = this;
     }
