@@ -262,6 +262,7 @@ export default {
                 type: "warning"
             }).then(() => {
                 this.step__active = 0;
+                this.signatureChecked = false;
                 this.newRecordForm = {
                     patientID: '',
                     type: '',
@@ -398,6 +399,7 @@ export default {
                                 },
                                 signature: {}
                             }
+                            this.signatureChecked = false
                             this.step__active = 0
                             break;
                         default:
