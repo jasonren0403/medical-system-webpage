@@ -2,8 +2,7 @@
 	"name": "fabric_network",
 	"version": "1.0.0",
 	"dependencies": {
-		"dns": "^0.2.2",
-		"http2": "^3.3.7",
+		"fabric-ca-client": "^2.2.5",
 		"fabric-network": "^2.2.5"
 	},
 	"main": "FabricGateway.js",

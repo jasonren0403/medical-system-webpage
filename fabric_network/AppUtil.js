@@ -9,45 +9,125 @@
 exports.buildCCPOrg1 = () => {
     // build a JSON object from the file contents
     const ccp = {
-        "PeerOrgs": [
-            {
-                "Name": "Org1",
-                "Domain": "org1.example.com",
-                "EnableNodeOUs": true,
-                "Template": {
-                    "Count": 1,
-                    "SANS": [
-                        "localhost"
-                    ]
-                },
-                "Users": {
-                    "Count": 1
+        "name": "first-network-org1",
+        "version": "1.0.0",
+        "client": {
+            "organization": "Org1",
+            "connection": {
+                "timeout": {
+                    "peer": {
+                        "endorser": "300"
+                    }
                 }
             }
-        ]
-    };
+        },
+        "organizations": {
+            "Org1": {
+                "mspid": "Org1MSP",
+                "peers": [
+                    "peer0.org1.example.com",
+                    "peer1.org1.example.com"
+                ],
+                "certificateAuthorities": [
+                    "ca.org1.example.com"
+                ]
+            }
+        },
+        "peers": {
+            "peer0.org1.example.com": {
+                "url": "grpcs://localhost:7051",
+                "tlsCACerts": {
+                    "path": "crypto-config/peerOrganizations/org1.example.com/tlsca/tlsca.org1.example.com-cert.pem"
+                },
+                "grpcOptions": {
+                    "ssl-target-name-override": "peer0.org1.example.com"
+                }
+            },
+            "peer1.org1.example.com": {
+                "url": "grpcs://localhost:8051",
+                "tlsCACerts": {
+                    "path": "crypto-config/peerOrganizations/org1.example.com/tlsca/tlsca.org1.example.com-cert.pem"
+                },
+                "grpcOptions": {
+                    "ssl-target-name-override": "peer1.org1.example.com"
+                }
+            }
+        },
+        "certificateAuthorities": {
+            "ca.org1.example.com": {
+                "url": "https://localhost:7054",
+                "caName": "ca-org1",
+                "tlsCACerts": {
+                    "path": "crypto-config/peerOrganizations/org1.example.com/tlsca/tlsca.org1.example.com-cert.pem"
+                },
+                "httpOptions": {
+                    "verify": false
+                }
+            }
+        }
+    }
     console.log(`Loaded the network configuration CCPOrg1`);
     return ccp;
 };
 
 exports.buildCCPOrg2 = () => {
     const ccp = {
-        "PeerOrgs": [
-            {
-                "Name": "Org2",
-                "Domain": "org2.example.com",
-                "EnableNodeOUs": true,
-                "Template": {
-                    "Count": 1,
-                    "SANS": [
-                        "localhost"
-                    ]
-                },
-                "Users": {
-                    "Count": 1
+        "name": "first-network-org2",
+        "version": "1.0.0",
+        "client": {
+            "organization": "Org2",
+            "connection": {
+                "timeout": {
+                    "peer": {
+                        "endorser": "300"
+                    }
                 }
             }
-        ]
+        },
+        "organizations": {
+            "Org2": {
+                "mspid": "Org2MSP",
+                "peers": [
+                    "peer0.org2.example.com",
+                    "peer1.org2.example.com"
+                ],
+                "certificateAuthorities": [
+                    "ca.org2.example.com"
+                ]
+            }
+        },
+        "peers": {
+            "peer0.org2.example.com": {
+                "url": "grpcs://localhost:9051",
+                "tlsCACerts": {
+                    "path": "crypto-config/peerOrganizations/org2.example.com/tlsca/tlsca.org2.example.com-cert.pem"
+                },
+                "grpcOptions": {
+                    "ssl-target-name-override": "peer0.org2.example.com"
+                }
+            },
+            "peer1.org2.example.com": {
+                "url": "grpcs://localhost:10051",
+                "tlsCACerts": {
+                    "path": "crypto-config/peerOrganizations/org2.example.com/tlsca/tlsca.org2.example.com-cert.pem"
+                },
+                "grpcOptions": {
+                    "ssl-target-name-override": "peer1.org2.example.com"
+                }
+            }
+        },
+        "certificateAuthorities": {
+            "ca.org2.example.com": {
+                "url": "https://localhost:8054",
+                "caName": "ca-org2",
+                "tlsCACerts": {
+                    "path": "crypto-config/peerOrganizations/org2.example.com/tlsca/tlsca.org2.example.com-cert.pem"
+                },
+                "httpOptions": {
+                    "verify": false
+                }
+            }
+        }
     }
     console.log(`Loaded the network configuration located at CCPOorg2`);
     return ccp;
