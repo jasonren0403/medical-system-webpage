@@ -99,14 +99,6 @@ let webpackConfig = {
     splitChunks: {
       chunks: 'all'
     }
-  },
-  node:{
-    setImmediate: false,
-    dgram: 'empty',
-    fs: 'empty',
-    net: 'empty',
-    tls: 'empty',
-    child_process: 'empty'
   }
 }
 

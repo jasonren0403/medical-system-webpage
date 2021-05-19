@@ -6,12 +6,12 @@
                 <el-form ref="form" :disabled="disabled" :model="doctor" label-width="40px">
                     <el-row :gutter="5">
                         <el-col :span="6">
-                            <el-form-item label="ID" prop="id" readonly>
+                            <el-form-item label="ID" prop="id" :disabled="true">
                                 <el-input v-model="doctor.person.id"></el-input>
                             </el-form-item>
                         </el-col>
                         <el-col :span="6">
-                            <el-form-item label="姓名" prop="name">
+                            <el-form-item label="姓名" prop="name" :disabled="true">
                                 <el-input v-model="doctor.person.name"></el-input>
                             </el-form-item>
                         </el-col>
@@ -29,7 +29,11 @@
                 </el-form>
                 <el-button-group>
                     <el-button type="primary" icon="el-icon-edit"
-                               @click="disabled=!disabled" :disabled="readySubmit">编辑/提交
+                               @click="disabled=!disabled">编辑
+                    </el-button>
+                    <el-button type="success" icon="el-icon-check" @click="handleOnEdit"
+                               :disabled="readySubmit||disabled">
+                        提交
                     </el-button>
                     <el-button type="danger" icon="el-icon-close"
                                :disabled="disabled" @click="handleCancelEdit">取消编辑
@@ -103,6 +107,15 @@ export default {
                 this.disabled = true
             })
 
+        },
+        handleOnEdit() {
+            //todo: Do there need API?
+            this.$notify.info({
+                title: '提示',
+                message: "要修改成".concat(JSON.stringify(this.temp_doctor))
+            })
+            this.disabled = true
+            this.readySubmit = false
         }
     }
 }

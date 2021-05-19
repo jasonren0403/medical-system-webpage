@@ -1,11 +1,24 @@
+// import FBGateway from "../../../fabric_network";
 module.exports = {
-    //todo: interact with SetPatientInfo
     type: "post",
     async handler(ctx, next) {
         let changeItem = ctx.request.body
         // delete changeItem["id"]
         delete changeItem["name"]
-        console.log(`set new patient info=> ${JSON.stringify(changeItem)}`)
+        // let fab = FBGateway.getInstance()
+        // let result = await fab.submitTransaction('SetPatientInfo',changeItem)
+        /*
+        let req = {
+            success: result.status ===200
+        }
+        if(result.status===200){
+            result.payload = atob(result.payload)
+            req["content"] = JSON.parse(result.payload)
+        }else{
+            req["message"] = result.message || "Unknown error"
+        }
+        ctx.body = req
+         */
         ctx.body = {
             success: true,
             // sample return= infoget(updated)

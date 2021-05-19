@@ -1,10 +1,24 @@
+// import FBGateway from "../../../fabric_network";
 module.exports = {
     routerPath: '/api/v1/doctor/getDoctorByID',
     type: 'get',
     async handler(ctx, next) {
         let params = ctx.query
         let dID = params.doctorID
-        // todo: interact with fabric gateway to find the doctor(chaincode function:QueryDoctorByID)
+        // let fab = FBGateway.getInstance()
+        // let result = await fab.evaluateTransaction('QueryDoctorByID',dID)
+        /*
+        let req = {
+            success: result.status ===200
+        }
+        if(result.status===200){
+            result.payload = atob(result.payload)
+            req["content"] = JSON.parse(result.payload)
+        }else{
+            req["message"] = result.message || "Unknown error"
+        }
+        ctx.body = req
+         */
         ctx.body = {
             success: true,
             content: {

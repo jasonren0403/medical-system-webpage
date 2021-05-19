@@ -1,10 +1,24 @@
-
+// import FBGateway from "../../../fabric_network";
 module.exports = {
     type: "get",
     async handler(ctx, next) {
         let params = ctx.query
         let id = params.patientID
-        if (id === undefined) { //todo: getAllPatients
+        // let fab = FBGateway.getInstance()
+        if (id === undefined) {
+            // result = await fab.evaluateTransaction('GetAllPatients')
+            /*
+            let req = {
+                success: result.status ===200
+            }
+            if(result.status===200){
+                result.payload = atob(result.payload)
+                req["contents"] = JSON.parse(result.payload)
+            }else{
+                req["message"] = result.message || "Unknown error"
+            }
+            ctx.body = req
+             */
             ctx.body = {
                 success: true,
                 contents: [{
@@ -27,8 +41,21 @@ module.exports = {
             }
         } else {
             let content = {}
-            // todo: interact with GetPatientInfoByPID ,now is mocking!
-            switch(id){
+            // result = await fab.evaluateTransaction('GetPatientInfoByPID',id)
+            /*
+            let req = {
+                success: result.status ===200
+            }
+            if(result.status===200){
+                result.payload = atob(result.payload)
+                req["content"] = JSON.parse(result.payload)
+            }else{
+                req["message"] = result.message || "Unknown error"
+            }
+            ctx.body = req
+             */
+            // todo: now is mocking!
+            switch (id) {
                 case "p1":
                     content = {
                         "person": {"id": "p1", "name": "Jack", "age": 44},
@@ -79,9 +106,5 @@ module.exports = {
                 content: content
             }
         }
-// sample return(single):
-// {"person":{"id":"p1","name":"Jack","age":44},"country":"China","region":"Beijing","birthday":"1980-4-10","isMarried":true,"career":"career1","address":"addr1"}
-        //sample return(getAll)
-        // [{"person":{"id":"p1","name":"Jack","age":44},"country":"China","region":"Beijing","birthday":"1980-4-10","isMarried":true,"career":"career1","address":"addr1"},{"person":{"id":"p2","name":"Rose","age":44},"country":"China","region":"Beijing","birthday":"1980-4-10","isMarried":true,"career":"career2","address":"addr2"}]
     }
 }

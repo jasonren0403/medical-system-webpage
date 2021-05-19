@@ -1,21 +1,40 @@
+// import FBGateway from "../../fabric_network";
 module.exports = {
     // routerPath: '/api/v1/medicalRecord/get',
     type: 'get',
     async handler(ctx, next) {
+        //let fab = FBGateway.getInstance()
         let params = ctx.query
         let id = params.patientID
         let record_id = params.record_id
-        // console.log(ctx.body)
-        // todo: interact with fabric gateway (chaincode function:GetMedicalRecord(pid))
-        if (record_id!==undefined){
-            // filter record_id
+        /*
+        let result
+         */
+        if (record_id !== undefined) {
+            //result = await fab.evaluateTransaction('GetMedicalRecord',id)
             ctx.body = {
-                success:true,
-                content:{
-
-                }
+                success: true,
+                content: {}
+            }
+        } else {
+            //result = await fab.evaluateTransaction('GetMedicalRecord')
+            ctx.body = {
+                success: true,
+                contents: []
             }
         }
+        /*
+        * let req = {
+            success: result.status ===200
+        }
+        if(result.status===200){
+            result.payload = atob(result.payload)
+            req["contents"] = JSON.parse(result.payload)
+        }else{
+            req["message"] = result.message || "Unknown error"
+        }
+        ctx.body = req
+        * */
         ctx.body = {
             success: true,
             contents: [{

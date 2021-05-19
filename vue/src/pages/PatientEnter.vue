@@ -203,7 +203,7 @@ export default {
             newPatientForm: {
                 pID: '',
                 name: '',
-                age: 44,
+                age: 0,
                 country: '',
                 region: '',
                 birthday: new Date(),

@@ -1,6 +1,20 @@
+// import FBGateway from "../../../fabric_network";
 module.exports = {
     async handler(ctx, next) {
-        // todo: interact with getAllDoctors
+        // let fab = FBGateway.getInstance()
+        // let result = await fab.evaluateTransaction('GetAllDoctors')
+        /*
+        let req = {
+            success: result.status ===200
+        }
+        if(result.status===200){
+            result.payload = atob(result.payload)
+            req["contents"] = JSON.parse(result.payload)
+        }else{
+            req["message"] = result.message || "Unknown error"
+        }
+        ctx.body = req
+         */
         ctx.body = {
             success: true,
             contents: [{
