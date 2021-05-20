@@ -4,7 +4,7 @@
             <PageHeader/>
         </el-header>
         <el-container>
-            <el-aside width="200px" v-show="loggedIn">
+            <el-aside width="200px" v-show="loggedIn" class="hidden-xs-only">
                 <AsideMenu/>
             </el-aside>
             <el-main id="main-content">
@@ -22,7 +22,7 @@ import {mapState, mapActions} from 'vuex'
 import PageHeader from "@/components/PageHeader";
 import PageFooter from "@/components/PageFooter";
 import AsideMenu from "@/components/Menu"
-
+import 'element-ui/lib/theme-chalk/display.css';
 export default {
     name: 'App',
     components: {PageFooter, PageHeader, AsideMenu},

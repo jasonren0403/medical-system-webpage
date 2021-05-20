@@ -16,7 +16,7 @@
                     <i class="el-icon-set-up"></i>
                 </template>
                 <el-row :gutter="25">
-                    <el-col :span="8">
+                    <el-col :xs="24" :sm="12" :lg="8">
                         <el-card>
                             <div slot="header">
                                 <span>医生信息</span>
@@ -32,7 +32,7 @@
                             </div>
                         </el-card>
                     </el-col>
-                    <el-col :span="8">
+                    <el-col :xs="24" :sm="12" :lg="8">
                         <el-card>
                             <div slot="header"><span>患者信息</span></div>
                             <div class="paragraph">
@@ -51,7 +51,7 @@
                             </div>
                         </el-card>
                     </el-col>
-                    <el-col :span="8">
+                    <el-col :xs="24" :sm="12" :lg="8">
                         <el-card>
                             <div slot="header"><span>病历管理</span></div>
                             <div class="paragraph"><p>在这里，可以进行病历的操作和流转</p></div>

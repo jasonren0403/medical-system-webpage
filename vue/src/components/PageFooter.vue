@@ -1,8 +1,10 @@
 <template>
     <el-row :gutter="15">
-        <el-col :span="8" :offset="4">Copyright &copy; <span class="info">{{ author }}, {{ currentYear }}</span>
+        <el-col :xs="24" :sm="{span: 8, offset: 4}">Copyright &copy; <span class="info">{{ author }}, {{
+                currentYear
+            }}</span>
         </el-col>
-        <el-col :span="12">接口运行情况：<span :class="[success?'success':'danger']">{{ message }}</span>
+        <el-col :xs="24" :sm="12">接口运行情况：<span :class="[success?'success':'danger']">{{ message }}</span>
             checked At：<span style="color:green">{{ checkTime|nonnegativable }}</span></el-col>
     </el-row>
 </template>

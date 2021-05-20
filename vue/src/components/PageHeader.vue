@@ -2,12 +2,21 @@
     <div class="h" v-if="isShow">
         <div v-if="loggedIn">
             <el-row :gutter="25">
-                <el-col :span="4" :offset="20">
+                <el-col :sm="{span:4,offset:20}" :xs="{offset:12,span:4}">
                     <el-dropdown trigger="click" @command="handleCommand">
                         <el-tooltip :content="'当前用户：'.concat(doctorName)" placement="bottom">
-                            <el-button type="primary">
-                                当前用户: {{ doctorName | striplongstr }}<i class="el-icon-user-solid el-icon--right"></i>
-                            </el-button>
+                            <div class="hidden-sm-and-up">
+                                <el-button type="primary" circle>
+                                    <!--todo: this round button did not show-->
+                                    <i class="el-icon-user-solid el-icon--right"></i>
+                                </el-button>
+                            </div>
+                            <div class="hidden-xs-only">
+                                <el-button type="primary">
+                                    当前用户: {{ doctorName | striplongstr }}<i
+                                    class="el-icon-user-solid el-icon--right"></i>
+                                </el-button>
+                            </div>
                         </el-tooltip>
                         <el-dropdown-menu slot="dropdown">
                             <el-dropdown-item icon="el-icon-exit" command="exit">退出系统</el-dropdown-item>
@@ -24,7 +33,7 @@
 
 <script>
 import {mapState, mapActions} from 'vuex'
-
+import 'element-ui/lib/theme-chalk/display.css';
 export default {
     name: "PageHeader",
     created() {
